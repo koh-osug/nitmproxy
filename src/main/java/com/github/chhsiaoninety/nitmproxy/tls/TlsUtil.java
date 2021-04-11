@@ -43,6 +43,9 @@ public class TlsUtil {
             .forClient()
             .protocols("TLSv1.3", "TLSv1.2")
             .applicationProtocolConfig(applicationProtocolConfig(context.tlsCtx()));
+        if (context.config().getClientKeyManagerFactory() != null) {
+            builder.keyManager(context.config().getClientKeyManagerFactory());
+        }
         if (context.config().isInsecure()) {
             builder.trustManager(InsecureTrustManagerFactory.INSTANCE);
         } else if (TRUST_MANAGER_FACTORY != null) {
