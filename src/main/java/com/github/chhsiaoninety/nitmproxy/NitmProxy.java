@@ -26,13 +26,16 @@ public class NitmProxy {
 
     private NitmProxyConfig config;
 
+    private NioEventLoopGroup bossGroup;
+    private NioEventLoopGroup workerGroup;
+
     public NitmProxy(NitmProxyConfig config) {
         this.config = config;
     }
 
     public void start() throws Exception {
-        NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+        bossGroup = new NioEventLoopGroup(1);
+        workerGroup = new NioEventLoopGroup();
 
         try {
             ServerBootstrap bootstrap = new ServerBootstrap()
@@ -45,7 +48,7 @@ public class NitmProxy {
                     .sync()
                     .channel();
 
-            System.err.format("nitmproxy is listened at http://%s:%d%n",
+            System.err.format("nitmproxy is listened at %s:%d%n",
                               config.getHost(), config.getPort());
 
             channel.closeFuture().sync();
@@ -53,6 +56,11 @@ public class NitmProxy {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    public void stop() {
+        bossGroup.shutdownGracefully();
+        workerGroup.shutdownGracefully();
     }
 
     public static void main(String[] args) throws Exception {
