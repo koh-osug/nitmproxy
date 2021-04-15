@@ -48,7 +48,7 @@ public class NitmProxy {
                     .sync()
                     .channel();
 
-            System.err.format("nitmproxy is listened at %s:%d%n",
+            LOGGER.info("nitmproxy is listening at {}:{}",
                               config.getHost(), config.getPort());
 
             channel.closeFuture().sync();
