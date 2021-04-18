@@ -27,6 +27,7 @@ import java.util.function.BiFunction;
 
 import io.netty.util.internal.EmptyArrays;
 import io.netty.util.internal.PlatformDependent;
+import io.netty.util.internal.StringUtil;
 import io.netty.util.internal.SuppressJava6Requirement;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -124,7 +125,11 @@ class JdkAlpnSslUtils {
 
     static String getApplicationProtocol(SSLEngine sslEngine) {
         try {
-            return (String) GET_APPLICATION_PROTOCOL.invoke(sslEngine);
+            String protocol = (String) GET_APPLICATION_PROTOCOL.invoke(sslEngine);
+            if (protocol == null) {
+                return StringUtil.EMPTY_STRING;
+            }
+            return protocol;
         } catch (UnsupportedOperationException ex) {
             throw ex;
         } catch (Exception ex) {
